@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]ALIAS BOARDS v2.1[/b][/size][/color]
+[center][color=red][size=16pt][b]ALIAS BOARDS v2.2[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=29084][b]Written by SleePy[/b][/url]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]Taken Over By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=1024]Link to Mod[/url]
 [/center]
@@ -15,13 +15,11 @@ Under [b]Admin[/b] => [b]Forum[/b] => [b]Boards[/b], functionality has been adde
 [color=blue][b][size=12pt][u]Compatibility Notes[/u][/size][/b][/color]
 This mod was tested on SMF 2.0.11, but should work on SMF 2.1 Beta 2, as well as SMF 2.0 and up.  SMF 1.x is not and will not be supported.
 
-Please note that it [b]WILL[/b] remove the alias boards upon uninstall.  If you wish to retain your alias board settings, please back them up before uninstalling!!!
-
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
 The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=3.msg128#msg128]XPtsp.com[/url].
 
 [color=blue][b][size=12pt][u]License[/u][/size][/b][/color]
-Copyright (c) 2015, Douglas Orend
+Copyright (c) 2016, Douglas Orend
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

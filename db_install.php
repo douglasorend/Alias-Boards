@@ -11,11 +11,7 @@ elseif (!defined('SMF'))
 	exit('<b>Error:</b> Cannot install - please verify you put this in the same place as SMF\'s index.php.');
 db_extend('Packages');
 
-// Fields to add
-$new_fields = array(
-	'alias_board' => array('name'=> 'alias_board', 'type'=>'VARCHAR(255)'),
-);
-
+// Add the "alias_board" column to the boards table
 $smcFunc['db_add_column'](
 	'{db_prefix}boards', 
 	array(
@@ -24,6 +20,16 @@ $smcFunc['db_add_column'](
 		'type' => 'smallint', 
 		'null' => false, 
 		'default' => 0
+	)
+);
+
+// Change the redirects so that when the mod is uninstalled, the board "alias" becomes a redirect:
+$smcFunc['db_query']('', '
+	UPDATE {db_prefix}boards
+	SET redirect = CONCAT("' . $boardurl . '/index.php?board=", alias_board, ".0") 
+	WHERE alias_board > {int:no_alias}',
+	array(
+		'no_alias' => 0,
 	)
 );
 

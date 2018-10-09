@@ -1,3 +1,12 @@
+v2.2 - January 17th, 2015
+o Added code to automatically add the proper board redirect to the boards database.
+o Added code to remove the board information from aliased boards when unaliasing a board.
+o Added code to remove board redirect when unchecking alias board option in Edit Board UI.
+o Fixed issue where an alias can't be created with 1 board already in existance.
+o Modified [b]db_install.php[/b] to create board redirects for all existing aliases.
+o Removed [b]db_uninstall.php[/b] from mod, which is responsible for removing board aliases.
+o SMF 2.1: Fixed undefined index error in Edit Board UI.
+
 v2.1 - January 2nd, 2015
 o Removed option to create alias if one or fewer boards are present.
 

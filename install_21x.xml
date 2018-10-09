@@ -2,20 +2,12 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:alias_board</id>
-<version>2.1</version>
+<version>2.2</version>
 
 <file name="$sourcedir/Load.php">
 	<operation>
 		<search position="before"><![CDATA[c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups,]]></search>
 		<add><![CDATA[ b.alias_board,]]></add>
-	</operation>
-	<operation>
-		<search position="after"><![CDATA[// Basic operating information. (globals... :/)]]></search>
-		<add><![CDATA[// Redirect to board that alias points to:
-			if (!empty($row['alias_board']))
-				$board = $row['alias_board'];
-			
-			]]></add>
 	</operation>
 </file>
 <file name="$sourcedir/ManageBoards.php">
@@ -47,11 +39,49 @@
 		$boardOptions['alias_board'] = isset($_POST['alias_enable']) && !empty($_POST['alias_board']) ? $_POST['alias_board'] : 0;]]></add>
 	</operation>
 	<operation>
+		<search position="after"><![CDATA[// Create a new board...]]></search>
+		<add><![CDATA[// Get current alias status of board before updating it:
+		$request = $smcFunc['db_query']('', '
+			SELECT alias_board
+			FROM {db_prefix}boards
+			WHERE id_board = {int:board}',
+			array(
+				'board' => $_POST['boardid'],
+			)
+		);
+		$row = $smcFunc['db_fetch_assoc']($request);
+		$smcFunc['db_free_result']($request);
+		
+		]]></add>
+	</operation>
+	<operation>
 		<search position="before"><![CDATA[modifyBoard($_POST['boardid'], $boardOptions);]]></search>
 		<add><![CDATA[
 			
 		// Update the alias board with the info about the source row:
-		aliasBoard($_POST['boardid']);]]></add>
+		if (!isset($row['alias_board']) || (isset($row['alias_board']) && $row['alias_board'] != $boardOptions['alias_board']))
+			aliasBoard($_POST['boardid']);]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/MessageIndex.php">
+	<operation>
+		<search position="replace"><![CDATA[$smcFunc['db_query']('', '
+			UPDATE {db_prefix}boards
+			SET num_posts = num_posts + 1
+			WHERE id_board = {int:current_board}',
+			array(
+				'current_board' => $board,
+			)
+		);]]></search>
+		<add><![CDATA[if (empty($board_info['alias_board']))
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}boards
+				SET num_posts = num_posts + 1
+				WHERE id_board = {int:current_board}',
+				array(
+					'current_board' => $board,
+				)
+			);]]></add>
 	</operation>
 </file>
 <file name="$sourcedir/Stats.php">
@@ -107,7 +137,7 @@
 		<add><![CDATA[// Update the specified board so that it mirrors the board it is an alias to:
 function aliasBoard($dst_board)
 {
-	global $smcFunc;
+	global $smcFunc, $boardurl;
 	
 	// Get the information about the source board ($src_board):
 	$request = $smcFunc['db_query']('', '
@@ -122,7 +152,7 @@ function aliasBoard($dst_board)
 	$smcFunc['db_free_result']($request);
 	
 	// Make sure that the row exists AND it is an alias for a board:
-	if (empty($row) || $row['alias_board'] == 0)
+	if (empty($row))
 		return false;
 
 	// Strip a few fields out, then assemble the pieces for the SQL update
@@ -130,21 +160,34 @@ function aliasBoard($dst_board)
 	foreach (array('id_board', 'id_cat', 'id_parent', 'board_order', 'child_order', 'alias_board') as $field)
 		unset($row[$field]);
 	$fields = array();
-	foreach ($row as $field => $value)
-		$fields[] = 'dst.' . $field . ' = src.' . $field;
+	if (!empty($src_board))
+	{
+		foreach ($row as $field => $value)
+			$fields[] = ($field == 'redirect' ? 'dst.redirect = CONCAT("' . $boardurl . '/index.php?board=", dst.alias_board, ".0")' : 'dst.' . $field . ' = src.' . $field);
+	}
+	else
+	{
+		foreach ($row as $field => $value)
+			if (isInteger($value))
+				$fields[] = 'dst.' . $field . ' = 0';
+	}
 	
 	// Sync the two boards:
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}boards src, {db_prefix}boards dst
 		SET ' . implode($fields, ', ') . '
-		WHERE src.id_board = {int:src_board}
-			AND dst.id_board = {int:dst_board}',
+		WHERE dst.id_board = {int:dst_board}' . (!empty($src_board) ? '
+			AND src.id_board = {int:src_board}' : ''),
 		array(
 			'src_board' => (int) $src_board,
 			'dst_board' => (int) $dst_board,
 		)
 	);
 	return true;
+}
+
+function isInteger($input){
+    return(ctype_digit(strval($input)));
 }
 
 ]]></add>
@@ -208,10 +251,9 @@ function aliasBoard($dst_board)
 		echo '
 					</dl>
 					<div class="information">
-						<strong>', $txt['mboards_alias'],'</strong><br />
-						', $txt['mboards_redirect_disabled'], '
+						<strong>', $txt['mboards_alias'],'</strong>
 					</div>';
-	elseif (count($boards) > 1)
+	elseif (count($boards) > ($_REQUEST['sa'] != 'newboard'))
 		echo '
 						<dt>
 							<strong>', $txt['mboards_alias'], '</strong>
