@@ -1,0 +1,4 @@
+[hr]
+[center][color=red][size=16pt][b]WARNING!!![/b][/size][/color][/center]
+[hr]
+Uninstalling this mod will remove the aliased boards from your forum.  If this is not desirable, please make a backup of the boards table [b]BEFORE[/b] proceeding, so you can keep your aliased boards!
