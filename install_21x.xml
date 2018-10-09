@@ -2,8 +2,15 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:alias_board</id>
-<version>2.2</version>
+<version>2.3</version>
 
+<file name="$sourcedir/BoardIndex.php">
+	<operation>
+		<search position="before"><![CDATA['countChildPosts' => !empty($modSettings['countChildPosts']),]]></search>
+		<add><![CDATA[
+		'seperate_aliases' => true,]]></add>
+	</operation>
+</file>
 <file name="$sourcedir/Load.php">
 	<operation>
 		<search position="before"><![CDATA[c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups,]]></search>
@@ -64,6 +71,11 @@
 	</operation>
 </file>
 <file name="$sourcedir/MessageIndex.php">
+	<operation>
+		<search position="before"><![CDATA['countChildPosts' => !empty($modSettings['countChildPosts']),]]></search>
+		<add><![CDATA[
+		'seperate_aliases' => true,]]></add>
+	</operation>
 	<operation>
 		<search position="replace"><![CDATA[$smcFunc['db_query']('', '
 			UPDATE {db_prefix}boards

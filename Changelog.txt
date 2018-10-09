@@ -1,4 +1,8 @@
-v2.2 - January 17th, 2015
+v2.3 - April 15th, 2016
+o Added code to make aliases within same category show up properly.
+o Added Spanish Latin translation by [url=http://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee [BC][/url].
+
+v2.2 - January 17th, 2016
 o Added code to automatically add the proper board redirect to the boards database.
 o Added code to remove the board information from aliased boards when unaliasing a board.
 o Added code to remove board redirect when unchecking alias board option in Edit Board UI.
@@ -7,7 +11,7 @@ o Modified [b]db_install.php[/b] to create board redirects for all existing alia
 o Removed [b]db_uninstall.php[/b] from mod, which is responsible for removing board aliases.
 o SMF 2.1: Fixed undefined index error in Edit Board UI.
 
-v2.1 - January 2nd, 2015
+v2.1 - January 2nd, 2016
 o Removed option to create alias if one or fewer boards are present.
 
 v2.0 - December 4th, 2015

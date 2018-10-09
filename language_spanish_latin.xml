@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>Dougiefresh:Split_Forum</id>
+<version>2.3</version>
+
+<file name="$languagedir/ManageBoards.spanish_latin.php" error="skip">
+	<operation>
+		<search position="end" />
+		<add><![CDATA[
+$txt['mboards_alias'] = '¿Alias del otro foro?';
+$txt['mboards_alias_legend'] = '¿Alias para el foro?';
+$txt['mboards_alias_to_board'] = '<strong>Seleccione un foro para el alias:</strong><br /><span class="smalltext"><strong>Nota:</strong> no puedes colocar un alias a otro ya existente!</span>';
+$txt['alias'] = 'Alias';
+]]></add>
+	</operation>
+</file>
+<file name="$languagedir/ManageBoards.spanish_latin-utf8.php" error="skip">
+	<operation>
+		<search position="end" />
+		<add><![CDATA[
+$txt['mboards_alias'] = '¿Alias del otro foro?';
+$txt['mboards_alias_legend'] = '¿Alias para el foro?';
+$txt['mboards_alias_to_board'] = '<strong>Seleccione un foro para el alias:</strong><br /><span class="smalltext"><strong>Nota:</strong> no puedes colocar un alias a otro ya existente!</span>';
+$txt['alias'] = 'Alias';
+]]></add>
+	</operation>
+</file>
+</modification>
