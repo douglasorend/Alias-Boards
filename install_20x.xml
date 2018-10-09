@@ -1,282 +1,278 @@
 <?xml version="1.0"?>
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
-	<id>SleePy:alias_board</id>
-	<version>1.4</version>
-	<file name="$sourcedir/Subs-BoardIndex.php">
-		<operation>
-			<search position="after"><![CDATA[	// For performance, track the latest post while going through the boards.
-]]></search>
-			<add><![CDATA[
-	// Simply clean these
-	$board_array = $child_array = $alias_boards = $alias_childs = $find_alias_childs = array();
+<id>SleePy:alias_board</id>
+<version>2.0</version>
 
-	// Is our Aliases in a cache?
-	if (($cached_alias_boards_cats = cache_get_data('alias_boards_cats', !empty($modSettings['alias_cache_time']) ? $modSettings['alias_cache_time'] : 3600)) == null)
+<file name="$sourcedir/Load.php">
+	<operation>
+		<search position="before"><![CDATA[c.id_cat, b.name AS bname, b.description, b.num_topics, b.member_groups,]]></search>
+		<add><![CDATA[ b.alias_board,]]></add>
+	</operation>
+	<operation>
+		<search position="after"><![CDATA[// Basic operating information. (globals... :/)]]></search>
+		<add><![CDATA[// Redirect to board that alias points to:
+			if (!empty($row['alias_board']))
+				$board = $row['alias_board'];
+			
+			]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/ManageBoards.php">
+	<operation>
+		<search position="before"><![CDATA[function ManageBoards()
+{
+	global $context, $txt, $scripturl, $context]]></add>
+		<add><![CDATA[, $context]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[	// Everything's gonna need this.
+	loadLanguage('ManageBoards');]]></search>
+		<add><![CDATA[
+	$context['seperate_aliases'] = true;]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA['no_children' => true,]]></search>
+		<add><![CDATA[
+			'alias_board' => 0,]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA['permission_profile' => &$boards[$boardid]['profile'],]]></search>
+		<add><![CDATA[
+				'alias_board' => &$boards[$boardid]['alias_board'],]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[// Checkboxes....]]></search>
+		<add><![CDATA[
+		$boardOptions['alias_board'] = isset($_POST['alias_enable']) && !empty($_POST['alias_board']) ? $_POST['alias_board'] : 0;]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[modifyBoard($_POST['boardid'], $boardOptions);]]></search>
+		<add><![CDATA[
+			
+		// Update the alias board with the info about the source row:
+		aliasBoard($_POST['boardid']);]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/Stats.php">
+	<operation>
+		<search position="before"><![CDATA[AND b.redirect = {string:blank_redirect}]]></search>
+		<add><![CDATA[
+			AND b.alias_board = 0]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[WHERE b.redirect = {string:blank_redirect}]]></search>
+		<add><![CDATA[
+			AND b.alias_board = 0]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/Subs-BoardIndex.php">
+	<operation>
+		<search position="replace"><![CDATA[c.id_cat, c.name AS cat_name,' : '') . '
+			b.id_board, b.name AS board_name, b.description,]]></search>
+		<add><![CDATA[c.id_cat, c.name AS cat_name,' : '') . ' b.name AS board_name, b.description,
+			' . (empty($boardIndexOptions['seperate_aliases']) ? 'IF(b.alias_board = 0, b.id_board, b.alias_board) AS id_board' : 'b.id_board') . ',]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/Subs-Boards.php">
+	<operation>
+		<search position="before"><![CDATA[global $cat_tree, $boards, $boardList, $txt, $modSettings, $smcFunc]]></search>
+		<add><![CDATA[, $context]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level,]]></search>
+		<add><![CDATA[' . (empty($context['seperate_aliases']) ? 'IF(b.alias_board = 0, IFNULL(b.id_board, 0), b.alias_board)' : 'IFNULL(b.id_board, 0) ') . ' AS id_board, 
+			b.id_parent, b.name AS board_name, b.description, b.child_level, b.alias_board,]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA['posts' => $row['num_posts'],
+				'topics' => $row['num_topics'],]]></search>
+		<add><![CDATA['posts' => ($row['alias_board'] != 0 ? 0 : $row['num_posts']),
+				'topics' => ($row['alias_board'] != 0 ? 0 : $row['num_topics']),
+				'alias_board' => $row['alias_board'],]]></add>
+	</operation>
+	<operation>
+		<search position="after"><![CDATA[// Do the updates (if any).]]></search>
+		<add><![CDATA[if (isset($boardOptions['alias_board']))
 	{
-		// Find our Aliases.
-		$result_alias = $smcFunc['db_query']('', "
-			SELECT
-				alias_cat, alias_child, id_board, id_cat
-			FROM {db_prefix}boards AS b
-			WHERE {query_see_board}
-				AND	(alias_cat != {string:empty_string}
-					OR
-					alias_child != {string:empty_string})
-				" . (empty($modSettings['countChildPosts']) ? "
-				AND b.child_level <= 1" : ''),
-			array(
-				'empty_string' => '',
-				));
-
-		// Do a loopy loop, orginize and set them in arrays.
-		while ($row_alias = $smcFunc['db_fetch_assoc']($result_alias))
-		{
-			// Are we a cat?
-			if(!empty($row_alias['alias_cat']))
-			{
-				// Boom, now you know.
-				$tmp = explode(',', $row_alias['alias_cat']);
-
-				// For every piece, lets set.
-				foreach($tmp as $kitty)
-					$alias_boards[$row_alias['id_board']][$kitty] = $row_alias['id_cat'];
-			}
-			// Is it going to a board?
-			if(!empty($row_alias['alias_child']))
-			{
-				// Boom, now you know.
-				$tmp = explode(',', $row_alias['alias_child']);
-
-				// For every piece, lets set.
-				foreach($tmp as $board)
-				{
-					//				original board	   aliased board	Original cat.
-					$alias_childs[$row_alias['id_board']][$board] = array('original' => $row_alias['id_cat'], 'aliased' => 0);
-					$find_alias_childs[$board][$row_alias['id_board']] = $row_alias['id_board'];
-				}
-			}
-		}
-		$smcFunc['db_free_result']($result_alias);
-
-		if (!empty($find_alias_childs))
-		{
-			$request = $smcFunc['db_query']('', '
-				SELECT id_board, id_cat, id_parent
-				FROM {db_prefix}boards as b
-				WHERE {query_see_board}
-					AND b.id_board IN ({array_int:aliased_childs})',
-				array(
-					'aliased_childs' => array_keys($find_alias_childs),
-			));
-
-			while ($row_child = $smcFunc['db_fetch_assoc']($request))
-				if (isset($find_alias_childs[$row_child['id_board']]))
-					foreach ($find_alias_childs[$row_child['id_board']] as $id_board => $fakev)
-						$alias_childs[$id_board][$row_child['id_board']]['aliased'] = $row_child['id_cat'];
-			$smcFunc['db_free_result']($request);
-		}
-
-		// Store in cache
-		if (!empty($modSettings['cache_enable']))
-		{
-			$cached_alias_boards_cats = array('alias_boards' => $alias_boards, 'alias_childs' => $alias_childs);
-			cache_put_data('alias_boards_cats', $cached_alias_boards_cats, !empty($modSettings['alias_cache_time']) ? $modSettings['alias_cache_time'] : 3600);
-		}	
+		$boardUpdates[] = 'alias_board = {int:alias_board}';
+		$boardUpdateParameters['alias_board'] = (int) $boardOptions['alias_board'];
 	}
+
+	]]></add>
+	</operation>
+	<operation>
+		<search position="after"><![CDATA[// Remove one or more boards.]]></search>
+		<add><![CDATA[// Update the specified board so that it mirrors the board it is an alias to:
+function aliasBoard($dst_board)
+{
+	global $smcFunc;
+	
+	// Get the information about the source board ($src_board):
+	$request = $smcFunc['db_query']('', '
+		SELECT *
+		FROM {db_prefix}boards
+		WHERE id_board = {int:id_board}',
+		array(
+			'id_board' => (int) $dst_board,
+		)
+	);
+	$row = $smcFunc['db_fetch_assoc']($request);
+	$smcFunc['db_free_result']($request);
+	
+	// Make sure that the row exists AND it is an alias for a board:
+	if (empty($row) || $row['alias_board'] == 0)
+		return false;
+
+	// Strip a few fields out, then assemble the pieces for the SQL update
+	$src_board = $row['alias_board'];
+	foreach (array('id_board', 'id_cat', 'id_parent', 'board_order', 'child_order', 'alias_board') as $field)
+		unset($row[$field]);
+	$fields = array();
+	foreach ($row as $field => $value)
+		$fields[] = 'dst.' . $field . ' = src.' . $field;
+	
+	// Sync the two boards:
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}boards src, {db_prefix}boards dst
+		SET ' . implode($fields, ', ') . '
+		WHERE src.id_board = {int:src_board}
+			AND dst.id_board = {int:dst_board}',
+		array(
+			'src_board' => (int) $src_board,
+			'dst_board' => (int) $dst_board,
+		)
+	);
+	return true;
+}
+
+]]></add>
+	</operation>
+	<operation>
+		<search position="after"><![CDATA[$board_id = $smcFunc['db_insert_id']('{db_prefix}boards', 'id_board');]]></search>
+		<add><![CDATA[$_POST['boardid'] = ]]></add>
+	</operation>
+</file>
+<file name="$sourcedir/Subs-Post.php">
+	<operation>
+		<search position="replace"><![CDATA[SET num_posts = num_posts + 1' . ($new_topic ? ', num_topics = num_topics + 1' : '') . '
+			WHERE id_board = {int:id_board}',]]></search>
+		<add><![CDATA[SET num_posts = num_posts + 1' . ($new_topic ? ', num_topics = num_topics + 1' : '') . '
+			WHERE id_board = {int:id_board} 
+				OR alias_board = {int:id_board}',]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[SET unapproved_posts = unapproved_posts + 1' . ($new_topic ? ', unapproved_topics = unapproved_topics + 1' : '') . '
+			WHERE id_board = {int:id_board}',]]></search>
+		<add><![CDATA[SET unapproved_posts = unapproved_posts + 1' . ($new_topic ? ', unapproved_topics = unapproved_topics + 1' : '') . '
+			WHERE id_board = {int:id_board} 
+				OR alias_board = {int:id_board}',]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[num_topics = num_topics + {int:num_topics}, unapproved_topics = unapproved_topics + {int:unapproved_topics}
+			WHERE id_board = {int:id_board}',]]></search>
+		<add><![CDATA[num_topics = num_topics + {int:num_topics}, unapproved_topics = unapproved_topics + {int:unapproved_topics}
+			WHERE id_board = {int:id_board} 
+				OR alias_board = {int:id_board}',]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[SET id_msg_updated = {int:id_msg_updated}
+			WHERE id_board IN ({array_int:board_list})]]></search>
+		<add><![CDATA[SET id_msg_updated = {int:id_msg_updated}
+			WHERE (id_board IN ({array_int:board_list}) OR (alias_board IN ({array_int:board_list}))]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
+			WHERE id_board IN ({array_int:board_list})',]]></search>
+		<add><![CDATA[SET id_last_msg = {int:id_last_msg}, id_msg_updated = {int:id_msg_updated}
+			WHERE (id_board IN ({array_int:board_list}) OR (alias_board IN ({array_int:board_list}))',]]></add>
+	</operation>
+</file>
+<file name="$themedir/ManageBoards.template.php">
+	<operation>
+		<search position="replace"><![CDATA[$board['id'], '">', $board['name'], '</a>]]></search>
+		<add><![CDATA[$board['id'], '">', $board['name'], ($board['alias_board'] != 0 ? ' <span class="smalltext">(' . $txt['alias'] . ')</span>' : ''), '</a>]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[function template_modify_board()
+{
+	global $context, $settings, $options, $scripturl, $txt, $modSettings]]></search>
+		<add><![CDATA[, $boards, $cat_tree]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[// Options for board name and description.
+	echo ']]></search>
+		<add><![CDATA[// Display checkbox concerning board aliasing options:
+	if (!empty($context['board']['topics']))
+		echo '
+					</dl>
+					<div class="information">
+						<strong>', $txt['mboards_alias'],'</strong><br />
+						', $txt['mboards_redirect_disabled'], '
+					</div>';
 	else
-	{
-		// Get them out of there.
-		$alias_boards = $cached_alias_boards_cats['alias_boards'];
-		$alias_childs = $cached_alias_boards_cats['alias_childs'];
-	}
+		echo '
+						<dt>
+							<strong>', $txt['mboards_alias'], '</strong>
+						</dt>
+						<dd>
+							<input type="checkbox" id="alias_enable" name="alias_enable"', $context['board']['alias_board'] != 0 ? ' checked="checked"' : '', ' onclick="hideAlias();" class="input_check" />
+						</dd>
+					</dl>';
 
-]]></add>
-		</operation>
-		<operation>
-
-			<search position="after"><![CDATA[	// By now we should know the most recent post...if we wanna know it that is.
-]]></search>
-			<add><![CDATA[
-	// Doing boards to other cateogires?
-	if (!empty($alias_boards) && isset($categories))
-	{
-		foreach ($alias_boards as $board => $cats)
-		{
-			foreach ($cats as $aliased_cat => $original)
-			{
-				$categories[$aliased_cat]['boards'][$board] = $categories[$original]['boards'][$board];
-
-				$categories[$aliased_cat]['boards'][$board]['children_new'] |= !empty($categories[$original]['boards'][$board]['children_new']) ? $categories[$original]['boards'][$board]['children_new'] : FALSE;
-				$categories[$aliased_cat]['boards'][$board]['new'] |= !empty($categories[$original]['boards'][$board]['new']) ? $categories[$original]['boards'][$board]['new'] : FALSE;
-			}
-		}
-	}
-
-	// Boards on the index to other boards on the index?
-	if (!empty($alias_childs))
-		foreach ($alias_childs as $board => $junk)
-			foreach ($junk as $aliased_board => $cats)
-				if (isset($categories))
-					$categories[$cats['aliased']]['boards'][$aliased_board]['children'][$board] = $categories[$cats['original']]['boards'][$board];
-]]></add>
-		</operation>
-	</file>
-	<file name="$sourcedir/ManageBoards.php">
-		<operation>
-			<search position="before"><![CDATA[
-		$context['board'] = array(
-			'is_new' => true,
-]]></search>
-			<add><![CDATA[
-			'alias_cat' => '',
-			'alias_child' => '',
-
-]]></add>
-		</operation>
-		<operation>
-			<search position="before"><![CDATA[		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
-]]></search>
-			<add><![CDATA[		$context['board']['alias_cat'] = $boards[$_REQUEST['boardid']]['alias_cat'];
-		$context['board']['alias_child'] = $boards[$_REQUEST['boardid']]['alias_child'];
-
-]]></add>
-		</operation>
-		<operation>
-			<search position="after"><![CDATA[			'name' => $tree['node']['name'],
-			'selected' => $catID == $curBoard['category']
-		);
-]]></search>
-			<add><![CDATA[
-			'real_id' => $catID,
-]]></add>
-		</operation>
-		<operation>
-			<search position="after"><![CDATA[		$boardOptions['override_theme'] = isset($_POST['override_theme']);
-		$boardOptions['board_theme'] = (int) $_POST['boardtheme'];
-		$boardOptions['access_groups'] = array();
-]]></search>
-			<add><![CDATA[
-		$boardOptions['alias_cat'] = isset($_POST['alias_cat']) ? implode(',', $_POST['alias_cat']) : '';
-		$boardOptions['alias_child'] = isset($_POST['alias_child']) ? implode(',', $_POST['alias_child']) : '';
-        cache_put_data('alias_boards_cats', null);
-
-]]></add>
-		</operation>
-	</file>
-	<file name="$sourcedir/ManageSettings.php">
-		<operation>
-			<search position="before"><![CDATA[
-		// Mod authors, add any settings UNDER this line. Include a comma at the end of the line and don't remove this statement!!
-]]></search>
-			<add><![CDATA[
-			// Alais Boards/Cats Cache time???
-		'',
-			array('int', 'alias_cache_time'),
-]]></add>
-		</operation>
-	</file>
-	<file name="$sourcedir/Subs-Boards.php">
-		<operation>
-			<search position="after"><![CDATA[	// Do the updates (if any).
-	if (!empty($boardUpdates))
-]]></search>
-			<add><![CDATA[
-	// Set the Aliased categories.
-	if (isset($boardOptions['alias_cat']))
-		$boardUpdates[] = 'alias_cat = "' . $boardOptions['alias_cat'] . '"';
-
-	// Set the Aliased boards.
-	if (isset($boardOptions['alias_child']))
-		$boardUpdates[] = 'alias_child = "' . $boardOptions['alias_child'] . '"';
-
-]]></add>
-		</operation>
-		<operation>
-			<search position="replace"><![CDATA[			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
-]]></search>
-			<add><![CDATA[			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse, b.alias_cat, b.alias_child
-]]></add>
-		</operation>
-		<operation>
-			<search position="after"><![CDATA[				'parent' => $row['id_parent'],
-				'level' => $row['child_level'],
-				'order' => $row['board_order'],
-]]></search>
-			<add><![CDATA[
-				'alias_cat' => explode(',', $row['alias_cat']),
-				'alias_child' => explode(',', $row['alias_child']),
-
-]]></add>
-		</operation>
-	</file>
-	<file name="$themedir/ManageBoards.template.php">
-		<operation>
-			<search position="after"><![CDATA[	// Here the user can choose to force this board to use a theme other than the default theme for the forum.
-]]></search>
-			<add><![CDATA[
-	// We need some globals that SMF doesn't have.
-	global $cat_tree, $boards;
-
+	// Options for board name and description.
 	echo '
-					<div>
+				<div id="normal_board"', ($context['board']['alias_board'] != 0 ? ' style="display: none;"' : ''), '>
+					<dl class="settings">]]></add>
+	</operation>
+	<operation>
+		<search position="replace"><![CDATA[</div>';
+
+	if (!empty($context['board']['is_recycle']))]]></search>
+		<add><![CDATA[</div>
+				</div>
+				<div id="alias_board"', ($context['board']['alias_board'] == 0 ? ' style="display: none;"' : ''), '>
+					<fieldset>
+						<legend>', $txt['mboards_alias_legend'], '</legend>
 						<dl class="settings">
 							<dt>
-								<strong>', $txt['alias_cat_title'], '</strong><br />
-								<span class="smalltext">', $txt['alias_cat_desc'], '</span><br />
+								', $txt['mboards_alias_to_board'], '
 							</dt>
-							<dd>
-								<select name="alias_cat[]" multiple="multiple">
-									<option value="">', $txt['no_cat_selected'], '</option>';
-	foreach ($cat_tree as $category)
-		echo '
-									<option', !isset($context['board']['is_new']) && in_array($category['node']['id'], $context['board']['alias_cat']) ? ' selected="selected"' : '', ' value="', $category['node']['id'], '">', $category['node']['name'], '</option>';
-	echo '
-								</select>
-							</dd>
-							<dt>
-								<strong>', $txt['alias_child_title'], '</strong><br />
-								<span class="smalltext">', $txt['alias_child_desc'], '</span><br />
-							</dt>
-							<dd>
-								<select name="alias_child[]" multiple="multiple">
-									<option value="">', $txt['no_boards_selected'], '</option>';
+							<dd>';
+	$last_cat = 0;
 	foreach ($boards as $board)
-		echo '
-									<option', !isset($context['board']['is_new']) && in_array($board['id'], $context['board']['alias_child']) ? ' selected="selected"' : '', ' value="', $board['id'], '">', $board['name'], '</option>';
+	{
+		if ($last_cat != $board['category'])
+			echo '
+								', ($last_cat != 0 ? '<br />' : ''), '<u><strong>', $cat_tree[$last_cat = $board['category']]['node']['name'], '</strong></u><br />';
+		if (empty($context['board']['alias_board']))
+			$context['board']['alias_board'] = $board['id'];
+		if ($board['id'] != $context['board']['id'] && $board['alias_board'] == 0)
+			echo '
+								<input type="radio" name="alias_board" value="', $board['id'], '"', ($context['board']['alias_board'] == $board['id'] ? ' checked="checked"' : ''), '>', $board['name'], '<br />';
+	}
 	echo '
-								</select>
 							</dd>
 						</dl>
-					</div>';
-]]></add>
-		</operation>
-	</file>
-	<file name="$languagedir/Modifications.english.php">
-		<operation>
-			<search position="end" />
-			<add><![CDATA[
-$txt['alias_cat_title'] = 'Alias Categories';
-$txt['alias_cat_desc'] = 'Enter the <b>Category</b> IDs that you want this board to also appear in.';
-$txt['alias_child_title'] = 'Alias Boards';
-$txt['alias_child_desc'] = 'Enter the <b>Board</b> IDs that you want this board to also appear in.';
-$txt['no_cat_selected'] = 'Do not alias to any category';
-$txt['no_boards_selected'] = 'Do not alias to any board';
-$txt['alias_cache_time'] = 'How long should we cache the Alias board arrays? (In seconds) (Default: 3600 Secs/1 Hour)';
-]]></add>
-		</operation>
-	</file>
-	<file name="$languagedir/Modifications.english_utf8.php" error="skip">
-		<operation>
-			<search position="end" />
-			<add><![CDATA[$txt['alias_cat_title'] = 'Alias Categories';
-$txt['alias_cat_desc'] = 'Enter the <b>Category</b> IDs that you want this board to also appear in.';
-$txt['alias_child_title'] = 'Alias Boards';
-$txt['alias_child_desc'] = 'Enter the <b>Board</b> IDs that you want this board to also appear in.';
-$txt['no_cat_selected'] = 'Do not alias to any category';
-$txt['no_boards_selected'] = 'Do not alias to any board';
-$txt['alias_cache_time'] = 'How long should we cache the Alias board arrays? (In seconds) (Default: 3600 Secs/1 Hour)';
-]]></add>
-		</operation>
-	</file>
+					</fieldset>
+				</div>';
+
+	if (!empty($context['board']['is_recycle']))]]></add>
+	</operation>
+	<operation>
+		<search position="after"><![CDATA[function refreshOptions()]]></search>
+		<add><![CDATA[function hideAlias()
+		{
+			var alias = document.getElementById("alias_enable").checked;
+			document.getElementById("normal_board").style.display = (alias ? "none" : "");
+			document.getElementById("alias_board").style.display = (alias ? "" : "none");
+		}
+		]]></add>
+	</operation>
+	<operation>
+		<search position="before"><![CDATA[		refreshOptions();]]></search>
+		<add><![CDATA[
+		hideAlias();]]></add>
+	</operation>
+</file>
 </modification>

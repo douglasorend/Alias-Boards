@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<id>Dougiefresh:Split_Forum</id>
+<version>1.28</version>
+
+<file name="$languagedir/ManageBoards.english.php" error="skip">
+	<operation>
+		<search position="end" />
+		<add><![CDATA[
+$txt['mboards_alias'] = 'Alias for another board?';
+$txt['mboards_alias_legend'] = 'Alias for board';
+$txt['mboards_alias_to_board'] = '<strong>Select the board to alias to:</strong><br /><span class="smalltext"><strong>Note:</strong> you cannot alias to another alias!</span>';
+$txt['alias'] = 'Alias';
+]]></add>
+	</operation>
+</file>
+</modification>

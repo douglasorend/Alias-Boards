@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]ALIAS BOARDS v1.4[/b][/size][/color]
+[center][color=red][size=16pt][b]ALIAS BOARDS v2.0[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=29084][b]Written by SleePy[/b][/url]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]Taken Over By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=1024]Link to Mod[/url]
 [/center]
@@ -9,13 +9,11 @@
 This Mod allows you to Alias/Symlink or more commonly known for windows users as shortcuts.
 This emulates another board by copying its data into another location. This will show on the MessageIndex as well.
 
-Please note, If you alias a board to another category, there must be at least ONE board in that category visible or nothing will be shown.
-
 [color=blue][b][size=12pt][u]Admin Settings[/u][/size][/b][/color]
-At this time, there are no admin settings for this mod.  In order to disable this mod, you should uninstall it.
+Under [b]Admin[/b] => [b]Forum[/b] => [b]Boards[/b], functionality has been added to the Add and Edit Board UIs in order to add the ability to create, remove and update the aliases to boards 
 
 [color=blue][b][size=12pt][u]Compatibility Notes[/u][/size][/b][/color]
-This mod was tested on SMF 2.0.9, but should work on SMF 2.1 Beta 1, as well as SMF 2.0 and up.  SMF 1.x is not and will not be supported.
+This mod was tested on SMF 2.0.11, but should work on SMF 2.1 Beta 2, as well as SMF 2.0 and up.  SMF 1.x is not and will not be supported.
 
 If you are uninstalling, please note that it will not remove the database additions, you will have to run [b]remove.php[/b] manually to remove the fields this mod adds.
 
