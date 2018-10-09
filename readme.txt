@@ -20,45 +20,16 @@ This mod was recently tested on SMF 2.0.9, but should work on SMF 2.0 and up.  S
 If you are uninstalling, please note that it will not remove the database additions, you will have to run [b]database_remove.php[/b] manually to remove the fields this mod adds.
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
-[quote]
-[b][u]v1.2 - October 31st, 2014[/u][/b]
-+ Fixed the Manage Board UI using the changes Bugo posted
+The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=2.msg128#msg128]XPtsp.com[/url].
 
-Version 1.1.8
-! Updated for SMF 2.0 Final and added BSD License
+[color=blue][b][size=12pt][u]License[/u][/size][/b][/color]
+Copyright (c) 2015, Douglas Orend
+All rights reserved.
 
-Version 1.1.7
-! Updated for SMF 2.0 RC4
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-Version 1.1.6
-! Updated for SMF 2.0 RC3
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
-Version 1.1.5
-! Database install/removal was broken in SMF 2.0 RC2
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 
-Version 1.1.4
-! Updated to support SMF 2.0 RC1
-
-Version 1.1.3
-+ Took use of SMF Caching (SMF 2.0 + only) and adding a time setting for it.
-! Updated Support for of only SMF 2.0 Beta 4
-! Fix issues with Custom Board sort
-
-Version 1.1.2
-! Added Support for SMF 2.0 Beta 3 Public
-! Dropped support for old versions of 2.0 Betas
-+ Rewrote database installer/remover to work with other databases.
-
-Version 1.1.1
-! Fixed to work with 2.0 Beta 2.1
-
-Version 1.1
-! Fixed to work with 2.0 Beta 2
-
-Version 1.0
-! Release
-[/quote]
-
-[hr]
-[url=http://creativecommons.org/licenses/by/3.0][img]http://i.creativecommons.org/l/by/3.0/80x15.png[/img][/url]
-This work is licensed under a [url=http://creativecommons.org/licenses/by/3.0]Creative Commons Attribution 3.0 Unported License[/url]
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

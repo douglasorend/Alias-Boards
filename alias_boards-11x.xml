@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 	<id>SleePy:alias_board</id>
-	<version>1.1.8</version>
+	<version>1.3</version>
 	<file name="$sourcedir/BoardIndex.php">
 		<operation>
 			<search position="after"><![CDATA[	// Find all boards and categories, as well as related information.  This will be sorted by the natural order of boards and categories, which we control.
