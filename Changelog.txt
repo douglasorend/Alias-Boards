@@ -1,0 +1,42 @@
+v1.4 - April 6th, 2015
+o Updated for SMF 2.1 Beta 1
+
+v1.3 - January 16th, 2015
+o License change to Simplified BSD.  No functionality change.
+
+v1.2 - October 31st, 2014
++ Fixed the Manage Board UI using the changes Bugo posted
+
+Version 1.1.8
+! Updated for SMF 2.0 Final and added BSD License
+
+Version 1.1.7
+! Updated for SMF 2.0 RC4
+
+Version 1.1.6
+! Updated for SMF 2.0 RC3
+
+Version 1.1.5
+! Database install/removal was broken in SMF 2.0 RC2
+
+Version 1.1.4
+! Updated to support SMF 2.0 RC1
+
+Version 1.1.3
++ Took use of SMF Caching (SMF 2.0 + only) and adding a time setting for it.
+! Updated Support for of only SMF 2.0 Beta 4
+! Fix issues with Custom Board sort
+
+Version 1.1.2
+! Added Support for SMF 2.0 Beta 3 Public
+! Dropped support for old versions of 2.0 Betas
++ Rewrote database installer/remover to work with other databases.
+
+Version 1.1.1
+! Fixed to work with 2.0 Beta 2.1
+
+Version 1.1
+! Fixed to work with 2.0 Beta 2
+
+Version 1.0
+! Release

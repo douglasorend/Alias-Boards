@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 	<id>SleePy:alias_board</id>
-	<version>1.3</version>
+	<version>1.4</version>
 	<file name="$sourcedir/Subs-BoardIndex.php">
 		<operation>
 			<search position="after"><![CDATA[	// For performance, track the latest post while going through the boards.
@@ -193,9 +193,9 @@
 ]]></add>
 		</operation>
 		<operation>
-			<search position="replace"><![CDATA[			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
+			<search position="replace"><![CDATA[			b.num_posts, b.num_topics, b.deny_member_groups, c.id_cat, c.name AS cat_name, c.description AS cat_desc, c.cat_order, c.can_collapse
 ]]></search>
-			<add><![CDATA[			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse, b.alias_cat, b.alias_child
+			<add><![CDATA[			b.num_posts, b.num_topics, b.deny_member_groups, c.id_cat, c.name AS cat_name, c.description AS cat_desc, c.cat_order, c.can_collapse, b.alias_cat, b.alias_child
 ]]></add>
 		</operation>
 		<operation>

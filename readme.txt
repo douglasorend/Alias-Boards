@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]ALIAS BOARDS v1.2[/b][/size][/color]
+[center][color=red][size=16pt][b]ALIAS BOARDS v1.4[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=29084][b]Written by SleePy[/b][/url]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]Taken Over By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=1024]Link to Mod[/url]
 [/center]
@@ -15,12 +15,12 @@ Please note, If you alias a board to another category, there must be at least ON
 At this time, there are no admin settings for this mod.  In order to disable this mod, you should uninstall it.
 
 [color=blue][b][size=12pt][u]Compatibility Notes[/u][/size][/b][/color]
-This mod was recently tested on SMF 2.0.9, but should work on SMF 2.0 and up.  SMF v1.1 thru v1.1.9, as well as SMF 1.0.x is not and will not be supported.
+This mod was tested on SMF 2.0.9, but should work on SMF 2.1 Beta 1, as well as SMF 2.0 and up.  SMF 1.x is not and will not be supported.
 
-If you are uninstalling, please note that it will not remove the database additions, you will have to run [b]database_remove.php[/b] manually to remove the fields this mod adds.
+If you are uninstalling, please note that it will not remove the database additions, you will have to run [b]remove.php[/b] manually to remove the fields this mod adds.
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
-The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=2.msg128#msg128]XPtsp.com[/url].
+The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=3.msg128#msg128]XPtsp.com[/url].
 
 [color=blue][b][size=12pt][u]License[/u][/size][/b][/color]
 Copyright (c) 2015, Douglas Orend
