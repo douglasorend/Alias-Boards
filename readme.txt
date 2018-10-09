@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]ALIAS BOARDS v2.6[/b][/size][/color]
+[center][color=red][size=16pt][b]ALIAS BOARDS v2.7[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=29084][b]Written by SleePy[/b][/url]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]Taken Over By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=1024]Link to Mod[/url]
 [/center]
@@ -16,6 +16,9 @@ Under [b]Admin[/b] => [b]Forum[/b] => [b]Boards[/b], functionality has been adde
 This mod was tested on SMF 2.0.11, but should work on SMF 2.1 Beta 3, as well as SMF 2.0 and up.  SMF 2.1 Beta 1, 2.1 Beta 2, and SMF 1.x will not and will not be supported.
 
 If you are using [url=http://custom.simplemachines.org/mods/index.php?mod=3730]Split Forum mod[/url], this mod should be installed [b]BEFORE[/b] the Split Forum mod!
+
+[color=blue][b][size=12pt][u]Translators[/u][/size][/b][/color]
+o Spanish Latin: [url=http://www.simplemachines.org/community/index.php?action=profile;u=322597]Rock Lee [BC][/url]
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
 The changelog has been removed and can be seen at [url=http://www.xptsp.com/board/index.php?topic=3.msg128#msg128]XPtsp.com[/url].

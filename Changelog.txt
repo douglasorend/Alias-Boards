@@ -1,3 +1,8 @@
+v2.7 - February 10th, 2018
+o No functionality changes.
+o Added missing copyright owner to [b]LICENSE[/b] file.
+o Added translators to mod documentation file [b]readme.txt[/b].
+
 v2.6 - July 5th, 2017
 o Updated for SMF 2.1 Beta 3.
 o Removed support for SMF 2.1 Beta 1 and 2.
