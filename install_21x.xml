@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:alias_board</id>
-<version>2.5</version>
+<version>2.6</version>
 
 <file name="$sourcedir/BoardIndex.php">
 	<operation>
@@ -116,9 +116,9 @@
 		<add><![CDATA[, $context]]></add>
 	</operation>
 	<operation>
-		<search position="replace"><![CDATA[IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level,]]></search>
-		<add><![CDATA[' . (empty($context['seperate_aliases']) ? 'IF(b.alias_board = 0, IFNULL(b.id_board, 0), b.alias_board)' : 'IFNULL(b.id_board, 0) ') . ' AS id_board, 
-			b.id_parent, b.name AS board_name, b.description, b.child_level, b.alias_board,]]></add>
+		<search position="replace"><![CDATA['COALESCE(b.id_board, 0) AS id_board', 'b.id_parent', 'b.name AS board_name',]]></search>
+		<add><![CDATA[(empty($context['seperate_aliases']) ? 'IF(b.alias_board = 0, COALESCE(b.id_board, 0) AS id_board' : 'COALESCE(b.id_board, 0)') . ' AS id_board', 
+		'b.id_parent', 'b.name AS board_name', 'b.alias_board',]]></add>
 	</operation>
 	<operation>
 		<search position="replace"><![CDATA['posts' => $row['num_posts'],
@@ -199,7 +199,7 @@ function isInteger($input){
 ]]></add>
 	</operation>
 	<operation>
-		<search position="after"><![CDATA[$board_id = $smcFunc['db_insert_id']('{db_prefix}boards', 'id_board');]]></search>
+		<search position="after"><![CDATA[$board_id = $smcFunc['db_insert']('',]]></search>
 		<add><![CDATA[$_POST['boardid'] = ]]></add>
 	</operation>
 </file>
@@ -279,10 +279,10 @@ function isInteger($input){
 	</operation>
 	<operation>
 		<search position="replace"><![CDATA[</div>';
+	}
 
 	if (!empty($context['board']['is_recycle']))]]></search>
 		<add><![CDATA[</div>
-				</div>
 				<div id="alias_board"', ($context['board']['alias_board'] == 0 ? ' style="display: none;"' : ''), '>
 					<fieldset>
 						<legend>', $txt['mboards_alias_legend'], '</legend>
@@ -291,23 +291,24 @@ function isInteger($input){
 								', $txt['mboards_alias_to_board'], '
 							</dt>
 							<dd>';
-	$last_cat = 0;
-	foreach ($boards as $board)
-	{
-		if (isset($board['category']) && $last_cat != $board['category'])
-			echo '
+		$last_cat = 0;
+		foreach ($boards as $board)
+		{
+			if (isset($board['category']) && $last_cat != $board['category'])
+				echo '
 								', ($last_cat != 0 ? '<br />' : ''), '<u><strong>', $cat_tree[$last_cat = $board['category']]['node']['name'], '</strong></u><br />';
-		if (empty($context['board']['alias_board']))
-			$context['board']['alias_board'] = $board['id'];
-		if ($board['id'] != $context['board']['id'] && empty($board['alias_board']))
-			echo '
+			if (empty($context['board']['alias_board']))
+				$context['board']['alias_board'] = $board['id'];
+			if ($board['id'] != $context['board']['id'] && empty($board['alias_board']))
+				echo '
 								<input type="radio" name="alias_board" value="', $board['id'], '"', ($context['board']['alias_board'] == $board['id'] ? ' checked="checked"' : ''), '>', $board['name'], '<br />';
-	}
-	echo '
+		}
+		echo '
 							</dd>
 						</dl>
 					</fieldset>
 				</div>';
+	}
 
 	if (!empty($context['board']['is_recycle']))]]></add>
 	</operation>

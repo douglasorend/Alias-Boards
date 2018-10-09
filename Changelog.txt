@@ -1,3 +1,7 @@
+v2.6 - July 5th, 2017
+o Updated for SMF 2.1 Beta 3.
+o Removed support for SMF 2.1 Beta 1 and 2.
+
 v2.5 - January 28th, 2017
 o Fixed error that occurs when creating a new post.
 o Add a LICENSE file for the current license, 2-clause BSD.
