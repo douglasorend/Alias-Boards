@@ -1,7 +1,10 @@
-<hr>
+-------
+
 # ALIAS BOARDS v2.7
+
 [**Written by SleePy**](http://www.simplemachines.org/community/index.php?action=profile;u=29084) - [**Taken Over By Dougiefresh**](http://www.simplemachines.org/community/index.php?action=profile;u=253913)
-<hr>
+
+-------
 
 ## Install Requirements
 This mod was tested on **SMF 2.0.11**, but should work on **SMF 2.1 Beta 3**, as well as **SMF 2.0 and up**.  **SMF 2.1 Beta 1, 2.1 Beta 2**, and **SMF 1.x** will not and will not be supported.
