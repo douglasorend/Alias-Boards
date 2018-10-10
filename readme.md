@@ -1,6 +1,6 @@
 -------
 
-# ALIAS BOARDS v2.7
+# ALIAS BOARDS v2.8
 
 [**Written by SleePy**](http://www.simplemachines.org/community/index.php?action=profile;u=29084) - [**Taken Over By Dougiefresh**](http://www.simplemachines.org/community/index.php?action=profile;u=253913)
 
